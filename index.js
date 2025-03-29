@@ -4,8 +4,8 @@ const Users = require("./model/authModel")
 const dotenv = require("dotenv").config()
 const bcrypt = require("bcrypt")
 const crypto = require("crypto")
-const { validateRegistration } = require("./middleware/validation")
-
+const { validateRegistration, validateLogin } = require("./middleware/validation")
+const jwt = require("jsonwebtoken")
 
 const app = express()
 
@@ -85,3 +85,44 @@ app.get("/user/:id", async (request, response) =>{
   //    user
   //     })
 })
+
+
+app.post("/login", validateLogin, async(request, response)=>{
+
+  try {
+    // if(!request.user){
+
+    //   return response.status(401).json({message: "Access Denied, Invalid Authentication"})    }
+  
+  
+  //payload
+    const { email, password } = request.body
+
+  const user = await Users.findOne({email})
+
+  if(!user){
+    return response.status(404).json({message:"user account not found"})
+  }
+const  isMatched = bcrypt.compare(user.password, password)
+
+  if(!isMatched){
+    return response.status(400).json({message: "Incorrect password or email"})
+  }
+// Generating Tokens
+//Access Token
+
+const OTP =Math.floor( Math.random() * 100)
+const accessToken = jwt.sign({user},`${process.env.ACCESS_TOKEN}`,{expiresIn:"5m"})
+const refreshToken = jwt.sign({user},`${process.env.REFRESH_TOKEN}`,{expiresIn:"5m"})
+
+  return response.status(200).json({message : "Login Successful", accessToken, refreshToken, OTP })
+
+  
+  } catch (error) {
+    return response.status(500).json({message : error.message})
+  }
+})
+
+
+
+

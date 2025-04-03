@@ -25,7 +25,10 @@ console.log(`Server running on ${PORT}`)
 
 
 app.get("/", (request, response)=> {
-  return response.status(200).json({message: "Welcome to youthrive Backend"})
+  return response.status(200).json({
+    message: "Welcome to youthrive Backend",
+   message2: "Welcome to youthrive Backend, I am testing CICD"
+  })
 })
 
 
@@ -90,6 +93,15 @@ app.get("/user/:id", async (request, response) =>{
   //    user
   //     })
 })
+
+//www.yourwebsite.com/api
+//MVC Rule
+//Models
+//Views = Routes
+// Controllers
+
+
+
 
   
 app.post("/login", validateLogin, async(request, response)=>{
@@ -156,3 +168,5 @@ const fetch = async()=>{
  )
  return response.status
 }
+
+

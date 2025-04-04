@@ -8,6 +8,7 @@ const { validateRegistration, validateLogin } = require("./middleware/validation
 const jwt = require("jsonwebtoken")
 const validateToken = require("./middleware/validateAuth")
 const sendUserEmail  = require("./sendEmail")
+const { pagination } = require("./utilities")
 
 
 const app = express() 
@@ -153,7 +154,23 @@ app.post("/auth", validateToken, (request, response)=>{
 
   return response.status(200).json({message: "Successful", user: "request.user" })
 })
+app.get("/users",async(request, response)=>{
 
+  const {page, limit, skip} = pagination(request)
+const users = await Users.find().sort({createdAt: -1})
+//("-createdAt")
+//.limit(limit).skip(skip)
+
+return response.status(200).json({
+  message : "Successful",
+  count: users.length,
+  page,
+  users
+})
+
+
+
+})
 app.post("/fund", validateToken)
 
 app.get("/acct-balance", validateToken) 
